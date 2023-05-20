@@ -1,50 +1,91 @@
 package com.driver;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.stereotype.Repository;
-
-import java.util.*;
-
+import java.util.ArrayList;import java.util.HashMap;import java.util.List;
 @Repository
-@Getter
-@Setter
-public class StudentRepository{
-    Map<String,Student> students = new HashMap<>();
-    Map<String,Teacher> teachers = new HashMap<>();
+public class StudentRepository
+{
+    HashMap<String,Student> studentDb=new HashMap<>();
+    HashMap<String,Teacher> teacherDb=new HashMap<>();
+    HashMap<String,List<String>> teacherStudentDb=new HashMap<>();
 
-
-
-    public void addStudent(Student student){
-        students.put(student.getName(),student);
-    }
-    public void addTeacher(Teacher teacher) {
-        teachers.put(teacher.getName(),teacher);
+    public void addStudent(Student student)
+    {
+        String key = student.getName();
+        studentDb.put(key,student);
     }
 
-    public Student getStudentByName(String name) {
-        return students.get(name);
-    }
-    public Teacher getTeacherByName(String name) {
-        return teachers.get(name);
-    }
-    public List<String> getAllStudents() {
-        return new ArrayList<>(students.keySet());
+    public void addTeacher ( Teacher teacher)
+    {
+        String key=teacher.getName();
+        teacherDb.put(key, teacher);
     }
 
-
-    public void deleteAllTeachers() {
-        teachers.clear();
-    }
-
-    public Teacher deleteTeacherByName(String name) {
-//       return teachers.remove(name);
-        for(Map.Entry<String,Teacher> teacher: teachers.entrySet()){
-            if(teacher.getKey() != null && teacher.getKey().equals(name)){
-                teachers.remove(teacher.getKey());
-                return teacher.getValue();
-            }
+    public void addStudentTeacherPair(String student,String teacher)
+    {
+        if(teacherStudentDb.containsKey(teacher))
+        {
+            List<String> students=teacherStudentDb.get(teacher);
+            students.add(student);
+            teacherStudentDb.put(teacher,students);
         }
-        return null;
+        else
+        {
+            List<String> students=new ArrayList<String>();
+            students.add(student);
+            teacherStudentDb.put(teacher,students);
+        }
+    }
+
+    public Student getStudentByName(String studentName)
+    {
+        return studentDb.get(studentName);
+    }
+
+    public Teacher getTeacherByName(String teacherName)
+    {
+        return teacherDb.get(teacherName);
+    }
+
+    public List<String> getStudentsByTeacherName(String teacherName)
+    {
+        return teacherStudentDb.get(teacherName);
+    }
+
+    public List<String> getAllStudents()
+    {
+        List<String> students =new ArrayList<>();
+        for (Student obj: studentDb.values())
+        {
+            students.add(obj.getName());
+        }
+
+        return students;
+    }
+    public void deleteTeacherByName(String teacherName)
+    {
+        List<String> studentNames=teacherStudentDb.get(teacherName);
+
+        for(String name: studentNames)
+        {
+            studentDb.remove(name);
+        }
+
+        teacherStudentDb.remove(teacherName);
+        teacherDb.remove(teacherName);
+    }
+
+    public void deleteAllTeachers()
+    {
+        List<String> teachersList=new ArrayList<>();
+
+        for(Teacher obj:teacherDb.values())
+        {
+            teachersList.add(obj.getName());
+        }
+
+        for (String teachersName: teachersList) {
+            deleteTeacherByName(teachersName);
+        }
     }
 }
