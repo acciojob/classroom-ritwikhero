@@ -17,12 +17,27 @@ public class StudentService {
     public void addStudent(Student student){
         studentRepository.addStudent(student);
     }
+    public void addTeacher(Teacher teacher) {
+        studentRepository.addTeacher(teacher);
+    }
 
     public Student getStudentByName(String name) {
         return studentRepository.getStudentByName(name);
     }
 
+    public Teacher getTeacherByName(String name) {
+    return studentRepository.getTeacherByName(name);
+    }
     public List<String> getAllStudents() {
         return studentRepository.getAllStudents();
+    }
+
+
+    public void deleteAllTeachers() {
+        studentRepository.deleteAllTeachers();
+    }
+
+    public Teacher deleteTeacherByName(String name) {
+        return studentRepository.deleteTeacherByName(name);
     }
 }

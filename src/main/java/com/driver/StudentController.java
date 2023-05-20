@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class StudentController {
     private StudentService studentService;
 
+
     @Autowired
     public StudentController(StudentService studentService){
         this.studentService = studentService;
@@ -33,7 +34,7 @@ public class StudentController {
 
     @PostMapping("/add-teacher")
     public ResponseEntity<String> addTeacher(@RequestBody Teacher teacher){
-
+        studentService.addTeacher(teacher);
         return new ResponseEntity<>("New teacher added successfully", HttpStatus.CREATED);
     }
 
@@ -54,9 +55,11 @@ public class StudentController {
 
     @GetMapping("/get-teacher-by-name/{name}")
     public ResponseEntity<Teacher> getTeacherByName(@PathVariable String name){
-        Teacher teacher = null; // Assign student by calling service layer method
-
-        return new ResponseEntity<>(teacher, HttpStatus.CREATED);
+        Teacher teacher = studentService.getTeacherByName(name); // Assign student by calling service layer method
+        if(teacher != null){
+            return new ResponseEntity<>(teacher,HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/get-students-by-teacher-name/{teacher}")
@@ -73,13 +76,13 @@ public class StudentController {
     }
 
     @DeleteMapping("/delete-teacher-by-name")
-    public ResponseEntity<String> deleteTeacherByName(@RequestParam String teacher){
-
-        return new ResponseEntity<>(teacher + " removed successfully", HttpStatus.CREATED);
+    public ResponseEntity<String> deleteTeacherByName(@RequestParam String name){
+        studentService.deleteTeacherByName(name);
+        return new ResponseEntity<>(name + " removed successfully", HttpStatus.CREATED);
     }
     @DeleteMapping("/delete-all-teachers")
     public ResponseEntity<String> deleteAllTeachers(){
-
+        studentService.deleteAllTeachers();
         return new ResponseEntity<>("All teachers deleted successfully", HttpStatus.CREATED);
     }
 }
